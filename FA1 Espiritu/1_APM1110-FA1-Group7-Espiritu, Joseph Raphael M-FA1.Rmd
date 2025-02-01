@@ -1,0 +1,132 @@
+---
+title: "FA-1 R Language"
+author: "Espiritu, Joseph Raphael M."
+date: "`r Sys.Date()`"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+### **FA1 Questions**
+
+#### ***1.1*** Write the skewness program, and use it to calculate the skewness coefficient of the four examination subjects in results.txt (results.csv). What can you say about these data?
+
+There were four subjects consisting of 119 scores Arch1, Arch2, Prog1, and Prog2 and the NA rows of the students are Omitted
+
+```{r echo = FALSE}
+library(moments)
+par(mfrow = c(2, 2))
+par(bg = "lightgray")
+resultsDf <- na.omit(read.csv("results.csv")[, !colnames(read.csv("results.csv")) %in% "gender"])
+arch1 <- resultsDf$arch1
+arch2 <- resultsDf$arch2
+prog1 <- resultsDf$prog1
+prog2 <- resultsDf$prog2
+
+skewA1 <- round(skewness(arch1), digits = 3)
+skewA2 <- round(skewness(arch2), digits = 3)
+skewP1 <- round(skewness(prog1), digits = 3)
+skewP2 <- round(skewness(prog2), digits = 3)
+denA1 <- density(arch1)
+denA2 <- density(arch2)
+denP1 <- density(prog1)
+denP2 <- density(prog2)
+
+plot(denA1, main = "Skewness Graph Arch1", col = "red", xlab = "Range", ylab = "Frequency")
+plot(denA2, main = "Skewness Graph Arch2", col = "blue", xlab = "Range", ylab = "Frequency")
+plot(denP1, main = "Skewness Graph Prog1", col = "green", xlab = "Range", ylab = "Frequency")
+plot(denP2, main = "Skewness Graph Prog2", col = "yellow", xlab = "Range", ylab = "Frequency")
+cat("Negative is Right Values and Positive is Left Values")
+cat("The Arch1 Examination Skewness = ", skewA1, " Most Skewed Data to the Right \n")
+cat("The Arch2 Examination Skewness = ", skewA2, " \n")
+cat("The Prog1 Examination Skewness = ", skewP1, " \n")
+cat("The Prog2 Examination Skewness = ", skewP2, " Nearest Symmetrical Data \n")
+```
+
+#### **Analysis and Hypothesis**
+
+-   Peaks on the data via the high scores on the four examination are evident on the graphs and affects the results of skewness.
+-   All the graphs still represent a large amount of right side peaks and values or above the mean of score meaning the examiners have been given adequate education or have study habits to pass the examination.
+-   On the contrary the examination questions and essays might have been to easy for the examiners and due to this many are able to pass over the points and attain high scores.
+-   The most Symmetrical Data which is Arch2 Examination is interesting to know what made it different from the other three which are teachers/professors or even the examiners themselves or the examination might have been made by a different person hence the difference.
+
+#### ***1.2*** Write the skewness program, and use it to calculate the skewness coefficient of the four examination subjects in results.txt (results.csv). What can you say about these data?
+
+Pearson has given an approximate formula for the skewness that is easier to calculate than the exact formula given in Equation 2.1. $$
+skew = \frac{3(mean - median)}{standard \, deviation} 
+$$ Write a program to calculate this and apply it to the data in results.txt (results.csv). Is it a reasonable approximation?
+
+```{r echo = FALSE}
+# Function to calculate Pearson skewness
+pSkewCalc <- function(data, col_name) {
+    mean_val <- mean(data)
+    median_val <- median(data)
+    std_dev <- sd(data)
+    return(round((3 * (mean_val - median_val) / std_dev), digits = 3))
+}
+
+pSkew <- sapply(resultsDf, pSkewCalc)
+
+print(pSkew)
+```
+
+#### **Explained**
+
+**Pearson Skewness Use Case:**
+
+* The Pearson skewness is a standardized measure of skewness and is often used when comparing the skewness of different distributions.
+* It is less sensitive to extreme values compared to the sample skewness and if not often accurate and used for easily computed approximations of the skewness.
+* It is suitable for normally distributed data.
+
+**Regular Skewness Use Case:**
+
+* The sample skewness is a measure of the asymmetry of a sample distribution.
+* It is based on moments and is sensitive to extreme values in the data.
+* It is often used when working with real-world data samples.
+
+#### ***2.1*** For the class of 50 students of computing detailed in Exercise 1.1, use R to form the stem-and-leaf display for each gender, and discuss the advantages of this representation compared to the traditional histogram
+
+```` {r echo = FALSE}
+females <- c(57, 59, 78, 79, 60, 65, 68, 71, 75, 48, 51, 55, 56, 41, 43, 44, 75, 78, 80, 81, 83, 83, 85)
+males <- c(48, 49, 49, 30, 30, 31, 32, 35, 37, 41, 86, 42, 51, 53, 56, 42, 44, 50, 51, 65, 67, 51, 56, 58, 64, 64, 75)
+
+cat("Stem-and-leaf display for Females:\n")
+stem(females)
+
+cat("Stem-and-leaf display for Males:\n")
+stem(males)
+````
+
+**Advantages**
+
+* Preservation of Data: preserve the individual data points, allowing you to see the exact values in the data set.
+
+* Useful for Small Data sets: particularly useful for small data sets where the granularity of individual data points is important.
+
+* Flexibility: can be easily created by hand or with software tools, providing flexibility in their use.
+
+* Sorting Information: naturally sort the data, making it easier to identify patterns and trends and then serve as both a display of individual data points and a summary of the distribution.
+
+#### ***2.2*** For the class of 50 students of computing detailed in Exercise 1.1, use R to construct a box-plot for each gender and discuss the findings. 
+
+
+```` {r echo = FALSE}
+boxplot(females, males, names = c("Females", "Males"), col = c("pink", "blue"), main = "Boxplot by Gender", xlab = "Gender", ylab = "Value")
+````
+
+**Analysis**
+
+* General Distribution: The box plots suggest that the distribution of scores for females tends to be higher, as indicated by quartile 1 nearing the quartile 3 of the males' scores. The overall range of scores for females appears to be higher than that of males.
+
+* Length and Height Differences: The noticeable length and height differences in the boxplots indicate that females, on average, have higher scores than males. The interquartile range (IQR) for females is wider, suggesting a greater spread of scores.
+
+* Means and Quartiles: The means of the box plots reveal a substantial difference between genders. Females have a higher mean (around 68 to 70) compared to males (around 51 to 55), indicating a higher average score for females. The quartile positions also highlight the differences in the distribution of scores between genders.
+
+* Minimum Values: The minimum value for females corresponds to the quartile 1 of the males' boxplots. This implies that even the lower range of female scores is comparable to the lower quartile of male scores.
+
+* Outliers: The males' box plot indicates the presence of an outlier value above its whiskers. This outlier suggests the existence of a male student with an exceptionally high score compared to the rest of the male group.
+
+
+
+
+
