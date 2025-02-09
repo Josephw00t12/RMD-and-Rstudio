@@ -1,0 +1,108 @@
+---
+title: "FA-2 R 4.10 Projects"
+author: "Espiritu, Joseph Raphael M."
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    keep_md: true
+  rmarkdown: github_document
+  pdf_document: default
+---
+
+### **FA2 Questions**
+
+#### ***1.*** Use R to illustrate that the probability of getting:
+
+(a) a head is 0.5 if a fair coin is tossed repeatedly;
+(b) a red card is 0.5 if cards are drawn repeatedly with replacement from a well-shuffled deck;
+(c) an even number is 0.5 if a fair die is rolled repeatedly.
+
+
+**A**. Answer with Trials set to 100
+```` {r echo = TRUE}
+coin_outcomes <- c("H", "T")
+prob_head <- 0.5
+no_trialsA <- 100
+no_trialsB <- 1000
+no_trialsC <- 10000
+
+coin_toss_sample <- sample(coin_outcomes, no_trialsA, replace = TRUE, prob = c(prob_head, 1 - prob_head))
+
+head_freq <- sum(coin_toss_sample == "H") / no_trialsA
+tail_freq <- sum(coin_toss_sample == "T") / no_trialsA
+
+cat("Frequency of getting a head:", head_freq, "\n")
+cat("Frequency of getting a tail:", tail_freq, "\n\n")
+````
+
+
+**B**. Answer with Trials set to 1000
+    
+```` {r echo = TRUE}
+deckCards <- rep(c("Red", "Black"), each = 26)
+red_card_prob <- 0.5
+card_draws <- sample(deckCards, no_trialsB, replace = TRUE)
+
+red_freq <- sum(card_draws == "Red") / no_trialsB
+black_freq <- sum(card_draws == "Black") / no_trialsB
+
+cat("Frequency of red Cards:", red_freq, "\n")
+cat("Frequency of black Cards:", black_freq, "\n\n")
+````
+
+**C**. Answer with Trials set to 10000
+
+```` {r echo = TRUE}
+die_outcomes <- 1:6
+even_numbers <- die_outcomes[die_outcomes %% 2 == 0]
+even_prob <- 0.5
+
+
+die_rolls <- sample(die_outcomes, no_trialsC, replace = TRUE)
+
+# Calculating relative frequency
+even_freq <- sum(die_rolls %in% even_numbers) / no_trialsC
+odd_freq <- sum(!(die_rolls %in% even_numbers)) / no_trialsC
+
+cat("Frequency of getting an even number:", even_freq, "\n")
+cat("Frequency of getting an odd number:", odd_freq, "\n")
+````
+
+#### ***2.*** An experiment consists of tossing two fair coins. Use R to simulate this experiment 100 times and obtain the relative frequency of each possible outcome. Hence, estimate the probability of getting one head and one tail in any order.
+
+***Answer with Trials set to 100***
+```` {r echo = TRUE}
+coin_results <- c("Head", "Tail")
+trials_simulate <- 100
+
+count_head_tail <- function() {
+  coins <- sample(coin_results, 2, replace = TRUE)
+  return(sum(coins == "Head") == 1)
+}
+
+# Simulating the experiment
+results <- replicate(trials_simulate, count_head_tail())
+
+# Calculating relative frequency
+prob_OHOT <- sum(results) / trials_simulate
+
+cat("Probability of getting one head and one tail in any order:", prob_OHOT, "\n")
+````
+
+#### ***3.*** An experiment consists of rolling a die. Use R to simulate this experiment 600 times and obtain the relative frequency of each possible outcome. Hence, estimate the probability of getting each of 1, 2, 3, 4, 5, and 6.
+
+***Answer with Trials set to 600***
+```` {r echo = TRUE}
+die_outcomes <- 1:6
+num_rolls <- 600
+
+die_rolls <- sample(die_outcomes, num_rolls, replace = TRUE)
+
+rel_freq <- table(die_rolls) / num_rolls
+rel_freq <- rel_freq[order(names(rel_freq))]
+
+cat("Relative frequencies:\n")
+for (outcome in 1:6) {
+  cat("Outcome", outcome, ":", rel_freq[outcome], "\n")
+}
+````
