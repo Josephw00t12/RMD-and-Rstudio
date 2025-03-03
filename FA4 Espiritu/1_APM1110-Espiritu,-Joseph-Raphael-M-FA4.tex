@@ -1,0 +1,264 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{longtable}
+\usepackage{colortbl}
+\usepackage{array}
+\usepackage{anyfontsize}
+\usepackage{multirow}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={FA-4 R 6.1},
+  pdfauthor={Espiritu, Joseph Raphael M.},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{FA-4 R 6.1}
+\author{Espiritu, Joseph Raphael M.}
+\date{2025-03-03}
+
+\begin{document}
+\maketitle
+
+\subsubsection{\texorpdfstring{\textbf{Exercises
+6.1}}{Exercises 6.1}}\label{exercises-6.1}
+
+\paragraph{\texorpdfstring{\textbf{\emph{5.}} A geospatial analysis
+system has four sensors supplying images. The percent- age of images
+supplied by each sensor and the percentage of images relevant to a query
+are shown in the following
+table.}{5. A geospatial analysis system has four sensors supplying images. The percent- age of images supplied by each sensor and the percentage of images relevant to a query are shown in the following table.}}\label{a-geospatial-analysis-system-has-four-sensors-supplying-images.-the-percent--age-of-images-supplied-by-each-sensor-and-the-percentage-of-images-relevant-to-a-query-are-shown-in-the-following-table.}
+
+\begin{table}[!t]
+\caption*{
+{\large Sensor Data} \\ 
+{\small Percentage of Images Supplied and Relevant Images}
+} 
+\fontsize{12.0pt}{14.4pt}\selectfont
+\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}rrr}
+\toprule
+Sensor & Images Supplied & Relevant Images \\ 
+\midrule\addlinespace[2.5pt]
+1 & 15\% & 50\% \\ 
+2 & 20\% & 60\% \\ 
+3 & 25\% & 80\% \\ 
+4 & 40\% & 85\% \\ 
+\bottomrule
+\end{tabular*}
+\end{table}
+
+What is the overall Percentage of the Relevant Images?
+
+This is one Equation to solve it
+
+\[
+P_{\text{overall}} = \frac{\sum (P_{\text{supplied}, i} \times P_{\text{relevant}, i})}{\sum P_{\text{supplied}, i}}
+\]
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{percentSupplied }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\DecValTok{15}\NormalTok{, }\DecValTok{20}\NormalTok{, }\DecValTok{25}\NormalTok{, }\DecValTok{40}\NormalTok{)}
+\NormalTok{percentRelevant }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\DecValTok{50}\NormalTok{, }\DecValTok{60}\NormalTok{, }\DecValTok{80}\NormalTok{, }\DecValTok{85}\NormalTok{)}
+
+\NormalTok{overallPercentage }\OtherTok{\textless{}{-}} \FunctionTok{sum}\NormalTok{(percentSupplied }\SpecialCharTok{*}\NormalTok{ percentRelevant) }\SpecialCharTok{/} \FunctionTok{sum}\NormalTok{(percentSupplied)}
+
+\FunctionTok{cat}\NormalTok{(}\StringTok{"Overall percentage of the Relevant images:"}\NormalTok{, overallPercentage, }\StringTok{"\%}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Overall percentage of the Relevant images: 73.5 %
+\end{verbatim}
+
+\paragraph{\texorpdfstring{\textbf{\emph{6.}} A fair coin is tossed
+twice.}{6. A fair coin is tossed twice.}}\label{a-fair-coin-is-tossed-twice.}
+
+Let E be the event that both tosses have the same outcome, that is, E1 =
+(HH, TT). Let E2 be the event that the first toss is a head, that is, E2
+= (HH, HT). Let E3 be the event that the second toss is a head, that is,
+E3 = (TH, HH). Show that E1, E2, and E3 are pairwise independent but not
+mutually independent.
+
+\begin{table}[!t]
+\caption*{
+{\large Coin Toss Outcomes}
+} 
+\fontsize{12.0pt}{14.4pt}\selectfont
+\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}lll}
+\toprule
+Result & Heads & Tails \\ 
+\midrule\addlinespace[2.5pt]
+Heads & HH & HT \\ 
+Tails & TH & TT \\ 
+\bottomrule
+\end{tabular*}
+\end{table}
+
+\[
+(E_1) = \{ \text{HH}, \text{TT} \} \\
+\text{E1 is the Event both results are the Same} \\
+(E_2) = \{ \text{HH}, \text{HT} \} \\
+\text{E2 is the Event first results are the Heads} \\
+(E_3) = \{ \text{HH}, \text{TH} \} \\
+\text{E3 is the Event second results are the Heads} \\
+P(E_1) = P(E_2) = P(E_3) = \frac{1}{2} \\
+\]
+
+\paragraph{To show PAIRWISE INDEPENDENCE we can just show their
+Union/Probabilities
+Together}\label{to-show-pairwise-independence-we-can-just-show-their-unionprobabilities-together}
+
+\[
+P(E_i \cap E_j) = P(E_i) \times P(E_j)
+\]
+
+For \(E_1\) and \(E_2\):
+
+\[
+P(E_1 \cap E_2) = P(\text{HH}) = \frac{1}{4}
+\] \[
+P(E_1) \times P(E_2) = \frac{1}{2} \times \frac{1}{2} = \frac{1}{4}
+\]
+
+Similarly:
+
+\[
+P(E_1 \cap E_3) = P(\text{HH}) = \frac{1}{4}
+\] \[
+P(E_1) \times P(E_3) = \frac{1}{2} \times \frac{1}{2} = \frac{1}{4}
+\] \[
+P(E_2 \cap E_3) = P(\text{HH}) = \frac{1}{4}
+\] \[
+P(E_2) \times P(E_3) = \frac{1}{2} \times \frac{1}{2} = \frac{1}{4}
+\]
+
+\paragraph{These prove their PAIRWISE INDEPENDENCE, but now to show they
+are NOT MUTUALLY
+INDEPENDENT}\label{these-prove-their-pairwise-independence-but-now-to-show-they-are-not-mutually-independent}
+
+\paragraph{We can apply the same principle of multiplying the
+probabilities and their unions, and we will see the
+problem}\label{we-can-apply-the-same-principle-of-multiplying-the-probabilities-and-their-unions-and-we-will-see-the-problem}
+
+\[
+P(E_1 \cap E_2 \cap E_3) = P(E_1) \times P(E_2) \times P(E_3)
+\]
+
+\[
+P(E_1 \cap E_2 \cap E_3) = P(\text{HH}) = \frac{1}{4}
+\]
+
+\[
+P(E_1) \times P(E_2) \times P(E_3) = \frac{1}{2} \times \frac{1}{2} \times \frac{1}{2} = \frac{1}{8}
+\]
+
+\paragraph{\texorpdfstring{Hence, they are not mutually independent
+because \(E_2\) and \(E_3\) themselves don't carry enough information to
+help form the probability of
+\(E_1\).}{Hence, they are not mutually independent because E\_2 and E\_3 themselves don't carry enough information to help form the probability of E\_1.}}\label{hence-they-are-not-mutually-independent-because-e_2-and-e_3-themselves-dont-carry-enough-information-to-help-form-the-probability-of-e_1.}
+
+\paragraph{\texorpdfstring{However, having the union of \(E_2\) and
+\(E_3\) changes the probability of \(E_1\) happening, making it
+guaranteed.}{However, having the union of E\_2 and E\_3 changes the probability of E\_1 happening, making it guaranteed.}}\label{however-having-the-union-of-e_2-and-e_3-changes-the-probability-of-e_1-happening-making-it-guaranteed.}
+
+\end{document}

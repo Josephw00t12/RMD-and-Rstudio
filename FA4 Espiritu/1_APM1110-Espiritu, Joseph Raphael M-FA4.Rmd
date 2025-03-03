@@ -1,0 +1,164 @@
+---
+title: "FA-4 R 6.1"
+author: "Espiritu, Joseph Raphael M."
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    keep_md: true
+  rmarkdown: github_document
+  word_document: default
+  pdf_document: default
+---
+### **Exercises 6.1**
+
+#### ***5.*** A geospatial analysis system has four sensors supplying images. The percent- age of images supplied by each sensor and the percentage of images relevant to a query are shown in the following table.
+
+``` {r echo= FALSE}
+library(gt) 
+# Create the data frame
+sensor_data <- data.frame(
+  Sensor = c(1, 2, 3, 4),
+  Images.Supplied = c(15, 20, 25, 40),
+  Relevant.Images = c(50, 60, 80, 85)
+)
+
+# Generate a gt table
+sensor_data %>%
+  gt() %>%
+  tab_header(
+    title = "Sensor Data",
+    subtitle = "Percentage of Images Supplied and Relevant Images"
+  ) %>%
+  fmt_percent(
+    columns = c(Images.Supplied, Relevant.Images),  # Format percentages
+    scale_values = FALSE,
+    decimals = 0
+  ) %>%
+  cols_label(
+    Sensor = "Sensor",
+    Images.Supplied = "Images Supplied",
+    Relevant.Images = "Relevant Images"
+  )
+```
+
+What is the overall Percentage of the Relevant Images?
+
+This is one Equation to solve it
+
+\[
+P_{\text{overall}} = \frac{\sum (P_{\text{supplied}, i} \times P_{\text{relevant}, i})}{\sum P_{\text{supplied}, i}}
+\]
+
+```{r}
+percentSupplied <- c(15, 20, 25, 40)
+percentRelevant <- c(50, 60, 80, 85)
+
+overallPercentage <- sum(percentSupplied * percentRelevant) / sum(percentSupplied)
+
+cat("Overall percentage of the Relevant images:", overallPercentage, "%\n")
+```
+#### ***6.*** A fair coin is tossed twice.
+Let E be the event that both tosses have the same outcome, that is, E1 = (HH, TT).
+Let E2 be the event that the first toss is a head, that is, E2 = (HH, HT).
+Let E3 be the event that the second toss is a head, that is, E3 = (TH, HH).
+Show that E1, E2, and E3 are pairwise independent but not mutually independent.
+
+``` {r echo = FALSE}
+# Create the matrix
+coinToss <- matrix(c("HH", "TH", "HT", "TT"), nrow = 2, ncol = 2)
+rownames(coinToss) <- c("Heads", "Tails")
+colnames(coinToss) <- c("Heads", "Tails")
+
+# Convert to data frame for gt
+coinToss_df <- as.data.frame(coinToss)
+colnames(coinToss_df) <- c("Heads", "Tails")
+coinToss_df <- cbind(Result = c("Heads", "Tails"), coinToss_df)
+
+# Generate a gt table
+coinToss_df %>%
+  gt() %>%
+  tab_header(
+    title = "Coin Toss Outcomes",
+  )
+``` 
+
+\[
+(E_1) = \{ \text{HH}, \text{TT} \} \\
+\text{E1 is the Event both results are the Same} \\
+(E_2) = \{ \text{HH}, \text{HT} \} \\
+\text{E2 is the Event first results are the Heads} \\
+(E_3) = \{ \text{HH}, \text{TH} \} \\
+\text{E3 is the Event second results are the Heads} \\
+P(E_1) = P(E_2) = P(E_3) = \frac{1}{2} \\
+\]
+
+#### To show PAIRWISE INDEPENDENCE we can just show their Union/Probabilities Together
+
+\[
+P(E_i \cap E_j) = P(E_i) \times P(E_j)
+\]
+
+For \(E_1\) and \(E_2\):
+
+\[
+P(E_1 \cap E_2) = P(\text{HH}) = \frac{1}{4}
+\]
+\[
+P(E_1) \times P(E_2) = \frac{1}{2} \times \frac{1}{2} = \frac{1}{4}
+\]
+
+Similarly:
+
+\[
+P(E_1 \cap E_3) = P(\text{HH}) = \frac{1}{4}
+\]
+\[
+P(E_1) \times P(E_3) = \frac{1}{2} \times \frac{1}{2} = \frac{1}{4}
+\]
+\[
+P(E_2 \cap E_3) = P(\text{HH}) = \frac{1}{4}
+\]
+\[
+P(E_2) \times P(E_3) = \frac{1}{2} \times \frac{1}{2} = \frac{1}{4}
+\]
+
+#### These prove their PAIRWISE INDEPENDENCE, but now to show they are NOT MUTUALLY INDEPENDENT
+#### We can apply the same principle of multiplying the probabilities and their unions, and we will see the problem
+
+
+\[
+P(E_1 \cap E_2 \cap E_3) = P(E_1) \times P(E_2) \times P(E_3)
+\]
+
+\[
+P(E_1 \cap E_2 \cap E_3) = P(\text{HH}) = \frac{1}{4}
+\]
+
+\[
+P(E_1) \times P(E_2) \times P(E_3) = \frac{1}{2} \times \frac{1}{2} \times \frac{1}{2} = \frac{1}{8}
+\]
+
+#### Hence, they are not mutually independent because \( E_2 \) and \( E_3 \) themselves don't carry enough information to help form the probability of \( E_1 \).  
+
+#### However, having the union of \( E_2 \) and \( E_3 \) changes the probability of \( E_1 \) happening, making it guaranteed.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
