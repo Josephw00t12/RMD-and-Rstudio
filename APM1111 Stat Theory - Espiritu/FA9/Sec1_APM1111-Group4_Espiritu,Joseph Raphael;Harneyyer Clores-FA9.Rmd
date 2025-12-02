@@ -1,0 +1,200 @@
+---
+title: "FA9"
+author: "Espiritu, Joseph Raphael, Harneyyer, Clores"
+date: "2025-12-02"
+output:
+  html_document: default
+  pdf_document:
+    latex_engine: xelatex
+---
+
+```{r echo=FALSE}
+# Required packages
+options(repos = c(CRAN = "https://cloud.r-project.org"))
+install.packages(c("tidyverse","afex","emmeans","report","effectsize","broom", "scico"), dependencies=TRUE)
+library(tidyverse)
+library(afex)        # aov_ez for ANOVA compatible with Type III/II
+library(emmeans)     # pairwise comparisons & CIs
+library(report)     # nice reporting helpers (optional)
+library(effectsize)  # partial eta2
+library(broom)
+library(car)
+
+```
+
+```{r echo=TRUE}
+# --- 1. Enter your data (exactly as provided) -----------------
+fertilizer <- rep(c("Blend X", "Blend Y", "Blend Z"), each = 20)
+crop <- rep(rep(c("Wheat", "Corn", "Soy", "Rice"), each = 5), times = 3)
+
+yield <- c(
+  # Blend X
+  123,156,112,100,168,
+  128,150,174,116,109,
+  166,178,187,153,195,
+  151,125,117,158,155,
+  # Blend Y
+  135,130,176,120,155,
+  175,132,120,187,184,
+  140,145,159,131,126,
+  167,183,142,167,168,
+  # Blend Z
+  156,180,147,146,193,
+  186,138,178,176,190,
+  185,206,188,165,188,
+  175,173,154,191,169
+)
+
+dat <- tibble(fertilizer = factor(fertilizer),
+              crop = factor(crop),
+              yield = yield)
+
+# --- 2. Descriptives (cell means + SD) -----------------------
+cell_stats <- dat %>%
+  group_by(fertilizer, crop) %>%
+  summarise(N = n(), mean = mean(yield), sd = sd(yield)) %>%
+  arrange(fertilizer, crop)
+
+print(cell_stats)
+
+# --- 3. Assumption checks ------------------------------------
+# Boxplots (visual outlier check)
+ggplot(dat, aes(
+  x = interaction(fertilizer, crop),
+  y = yield,
+  fill = interaction(fertilizer, crop)
+)) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Set3") +
+  theme_minimal() +
+  labs(
+    x = "Fertilizer × Crop",
+    y = "Yield",
+    fill = "Group"
+  ) +
+  theme(
+    legend.position = "bottom",
+    legend.box = "horizontal",
+    legend.title = element_text(size = 12),
+    legend.text = element_text(size = 10),
+    legend.key.size = unit(0.7, "cm"),
+    legend.spacing.x = unit(0.4, "cm"),
+    legend.text.align = 0
+  ) +
+  guides(fill = guide_legend(nrow = 2, byrow = TRUE))
+
+# 1. Create ID column BEFORE using aov_ez
+dat <- dat %>% mutate(row = row_number())
+
+# 2. Run the two-way ANOVA
+mod <- aov_ez(
+  id = "row",
+  dv = "yield",
+  between = c("fertilizer", "crop"),
+  data = dat,
+  anova_table = list(correction = "none", es = "pes")
+)
+
+# 3. Extract residuals
+resid_vals <- residuals(mod$lm)
+
+# 4. Shapiro test
+shapiro.test(resid_vals)
+
+# Levene's test for homogeneity
+
+leveneTest(yield ~ fertilizer * crop, data = dat)
+
+# --- 4. Two-way ANOVA (Type II table similar to JASP) ----------
+# Use aov() + car::Anova (Type II) or afex. We'll print Type II.
+
+lm1 <- lm(yield ~ fertilizer * crop, data = dat)
+anova2 <- Anova(lm1, type = "II")   # Type II table
+anova2_tidy <- broom::tidy(anova2)
+anova2_tidy <- anova2_tidy %>%
+  mutate(sum_sq = sumsq, df = df, statistic = statistic, p.value = p.value) %>%
+  select(term, sum_sq, df, statistic, p.value)
+
+print(anova2_tidy)
+
+# partial eta2
+eta2_table <- effectsize::eta_squared(lm1, partial = TRUE)
+print(eta2_table)
+
+# --- 5. Interaction plot (JASP-style) --------------------------
+means <- dat %>% group_by(crop, fertilizer) %>% summarise(m = mean(yield))
+ggplot(means, aes(x = crop, y = m, group = fertilizer, color = fertilizer)) +
+  geom_point() + geom_line() +
+  labs(title = "Interaction plot: Fertilizer × Crop", y = "Mean Yield") +
+  theme_minimal() + theme(legend.position = "top")
+
+# --- 6. If significant interaction -> simple main effects & post-hocs
+# We'll test interaction and then run emmeans simple effects
+anova_results <- anova(lm1)
+print(anova_results)
+
+# Use emmeans to get simple effects
+emm <- emmeans(lm1, ~ fertilizer * crop)
+# Simple effects: fertilizer within each crop
+simple_fert <- contrast(emm, interaction = "pairwise", by = "crop", adjust = "bonferroni")
+print(simple_fert)
+
+# Simple effects: crop within fertilizer
+simple_crop <- contrast(emm, interaction = "pairwise", by = "fertilizer", adjust = "bonferroni")
+print(simple_crop)
+
+# Also full Tukey HSD for each main factor
+
+tuk_fert <- emmeans(lm1, pairwise ~ fertilizer, adjust = "tukey")
+tuk_crop <- emmeans(lm1, pairwise ~ crop, adjust = "tukey")
+print(tuk_fert)
+print(tuk_crop)
+
+
+
+```
+
+# 2B ANOVA REPORTING
+
+## A two-way ANOVA showed a statistically significant interaction between fertilizer blend and crop type, indicating that the effectiveness of each fertilizer depends on the crop.
+
+A two-way ANOVA was performed to examine the effects of fertilizer blend (Blend X, Blend Y, Blend Z) and crop type (Wheat, Corn, Soy, Rice) on crop yield. Visual inspection of boxplots indicated no extreme outliers among the 12 fertilizer × crop combinations (see boxplot on page 4) . Residual analysis confirmed that the assumption of normality was met, as shown by the Shapiro–Wilk test, W = 0.980, p = .440 (page 5) . Homogeneity of variance was assessed using Levene’s test (median centered), which was non-significant, F(11, 48) = 0.675, p = .755, indicating equal variances across groups (page 5). Thus, ANOVA assumptions were satisfied.
+
+The two-way ANOVA (Type II) revealed a significant main effect of fertilizer blend, F(2, 48) = 9.93, p < .001, partial η² = .29 (pages 5–6), indicating that average yields differed across fertilizer types. The main effect of crop was not statistically significant, F(3, 48) = 2.57, p = .065, partial η² = .14, suggesting that when averaged across fertilizer, crops did not significantly differ in yield.
+
+Importantly, there was a significant fertilizer × crop interaction, F(6, 48) = 2.35, p = .046, partial η² = .23 (pages 5–6) . This indicates that the effect of fertilizer blend on yield differed depending on the crop type. Because the interaction was significant, simple main effects were examined using Bonferroni-adjusted pairwise comparisons.
+
+Simple Main Effects of Fertilizer Within Each Crop
+
+(From page 7 of the PDF) 
+Corn: Blend Z produced significantly higher yields than Blend X (p = .018), whereas the differences between Blend X vs Blend Y and Blend Y vs Blend Z were not significant.
+
+Rice: No fertilizer pair reached significance after adjustment.
+
+Soy: Blend X produced significantly higher yields than Blend Y (p = .030), and Blend Z produced significantly higher yields than Blend Y (p = .003).
+
+Wheat: No pairwise fertilizer differences were statistically significant.
+
+Simple Main Effects of Crop Within Each Fertilizer
+
+(From page 7 of the PDF) 
+
+Blend X: Soy yielded significantly more than Wheat (p = .011) and Corn (p = .023).
+
+Blend Y: No crop comparisons reached significance.
+
+Blend Z: No crop comparisons reached significance after adjustment.
+
+Tukey HSD Main-Effects Post Hocs
+
+(From page 8 of the PDF) 
+
+Fertilizer:
+
+Blend Z > Blend X (mean difference = 28.15, p < .001)
+
+Blend Z > Blend Y (mean difference = 22.10, p = .005)
+
+Blend X vs Blend Y not significant
+
+Crop: Only Soy > Wheat reached significance (p = .042); all other crop pairs were non-significant.
