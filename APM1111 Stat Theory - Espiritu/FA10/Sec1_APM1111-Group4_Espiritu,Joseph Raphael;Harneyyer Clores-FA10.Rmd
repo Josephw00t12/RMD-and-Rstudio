@@ -1,0 +1,101 @@
+---
+title: "FA10"
+author: "Espiritu, Joseph Raphael, Harneyyer, Clores"
+date: "2025-12-05"
+output:
+  html_document: default
+  pdf_document:
+    latex_engine: xelatex
+---
+
+```{r echo=FALSE}
+# Required packages
+options(repos = c(CRAN = "https://cloud.r-project.org"))
+install.packages(c("tidyverse","afex","emmeans","report","effectsize","broom", "scico", "rstatix"), dependencies=TRUE)
+library(tidyverse)
+library(afex)        # aov_ez for ANOVA compatible with Type III/II
+library(emmeans)     # pairwise comparisons & CIs
+library(report)     # nice reporting helpers (optional)
+library(effectsize)  # partial eta2
+library(broom)
+library(car)
+library(rstatix)
+```
+```{r echo=TRUE}
+data <- read.csv("Cholesterol_R2.csv")
+
+# Convert Margarine to factor
+data$Margarine <- factor(data$Margarine)
+
+#Convert from WIDE → LONG format
+data_long <- pivot_longer(
+  data,
+  cols = c(Before, After4weeks, After8weeks),
+  names_to = "Time",
+  values_to = "Cholesterol"
+)
+
+data_long$Time <- factor(
+  data_long$Time,
+  levels = c("Before","After4weeks","After8weeks"),
+  labels = c("Before","Week4","Week8")
+)
+# Assumption Checks
+#Outliers ((Within each Margarine × Time cell))
+data_long %>%
+  group_by(Margarine, Time) %>%
+  identify_outliers(Cholesterol)
+
+#Normality/Shapiro
+model <- aov_ez(
+  id = "ID",
+  dv = "Cholesterol",
+  between = "Margarine",
+  within = "Time",
+  data = data_long,
+  anova_table = list(correction = "GG", es = "pes")
+)
+
+resid_vals <- residuals(model$lm)
+shapiro.test(resid_vals)
+
+#Homogeneity of Variance
+#Only applies to Margarine, because it is between-subjects.
+leveneTest(Cholesterol ~ Margarine, data = data_long)
+
+#Check Sphericity (aov_ez() already does this)
+model
+
+# Running Mixed ANOVA
+anova_results <- model$anova_table
+anova_results
+
+#Interaction Plot
+ggplot(data_long,
+       aes(Time, Cholesterol, color = Margarine, group = Margarine)) +
+  stat_summary(fun=mean, geom="line", size=1.2) +
+  stat_summary(fun=mean, geom="point", size=3) +
+  theme_minimal() +
+  labs(title="Cholesterol Over Time by Margarine Type",
+       y="Mean Cholesterol Level")
+
+#Simple Main Effects
+#(Only needed if interaction is significant)
+
+#Margarine differences at each Time point
+emmeans(model, pairwise ~ Margarine | Time, adjust = "bonferroni")
+
+#Time differences within each Margarine group
+emmeans(model, pairwise ~ Time | Margarine, adjust = "bonferroni")
+
+```
+
+# BW Mixed ANOVA REPORTING
+
+## A two-way mixed ANOVA revealed a significant main effect of time, indicating that cholesterol levels decreased across the three measurement points for all participants. However, the main effect of margarine brand was not significant,meaning that overall cholesterol levels did not differ between Brand A and Brand B when averaged across all time points.
+
+A two-way mixed ANOVA was conducted to examine the effects of margarine type (A vs. B) and time (Before, Week 4, Week 8) on cholesterol levels. Several assumption checks indicated violations, including non-normal residuals (Shapiro–Wilk W = .92, p = .002), unequal variances between margarine groups (Levene’s F = 10.51, p = .002), and violations of sphericity for the repeated-measures factor (Mauchly’s W = .46, p = .003). Greenhouse–Geisser corrections were therefore applied.
+
+The main effect of Margarine was not significant, F(1, 16) = 1.90, p = .187, ηp² = .11, indicating no overall difference in cholesterol between brands. There was a large and significant main effect of Time, F(1.30, 20.81) = 249.01, p < .001, ηp² = .94, showing that cholesterol decreased substantially over the three time points. Importantly, the Margarine × Time interaction was significant, F(1.30, 20.81) = 4.81, p = .031, ηp² = .23, suggesting that the rate of cholesterol reduction differed between the two margarine types.
+
+Simple main effects showed that cholesterol decreased over time for both margarines (all p < .001), although the two brands did not significantly differ at any individual time point (all p > .14). These findings suggest that both margarines effectively reduce cholesterol over time, with no clear advantage of one brand over the other.
